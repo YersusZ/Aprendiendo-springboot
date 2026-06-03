@@ -10,8 +10,7 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Min;
 
 
-@Getter
-@Setter
+@Getter@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
