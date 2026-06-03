@@ -5,12 +5,14 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
+@Entity
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
