@@ -3,7 +3,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example1.product_management.dto.ProductResponseDTO;
 import com.example1.product_management.dto.ProductRequestDTO;
-import com.example1.product_management.service.ProductService;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,10 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.example1.product_management.exceptions.NotFoundException;
-import com.example1.product_management.exceptions.BusinessException;
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
 import java.util.List;
+import com.example1.product_management.service.IProductService;
 
 
 /*GET/api/v1/products — listar todos los productos
@@ -32,7 +30,7 @@ DELETE/api/v1/products/{id} — eliminar un producto*/
 public class ProductsController {
 
     @Autowired
-    private ProductService productService;
+    private IProductService IproductService;
 
     /**
      * Listar todos los productos
@@ -40,11 +38,7 @@ public class ProductsController {
      */
     @GetMapping()
     public ResponseEntity<List<ProductResponseDTO>> getProducts() {
-        List<ProductResponseDTO> products = productService.getProducts();
-        if (products.isEmpty()) {
-            throw new NotFoundException("No products found", "P-404", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<>(IproductService.getProducts(), HttpStatus.OK);
     }
 
     /**
@@ -54,7 +48,7 @@ public class ProductsController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductbyId(@PathVariable Long id) {
-        ProductResponseDTO product = productService.getProductById(id);
+        ProductResponseDTO product = IproductService.getProductById(id);
         if (product == null) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }
@@ -68,10 +62,7 @@ public class ProductsController {
      */
     @PostMapping()
     public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody @Valid ProductRequestDTO product) {
-        if (product.getName().isEmpty() || product.getPrice().compareTo(BigDecimal.ZERO) == 0) {
-            throw new BusinessException("Name and price are required", "P-400", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
+        return new ResponseEntity<>(IproductService.createProduct(product), HttpStatus.CREATED);
     }
 
     /**
@@ -82,11 +73,11 @@ public class ProductsController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO product) {
-        ProductResponseDTO existingProduct = productService.getProductById(id);
+        ProductResponseDTO existingProduct = IproductService.getProductById(id);
         if (existingProduct == null) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(productService.updateProduct(id, product), HttpStatus.OK);
+        return new ResponseEntity<>(IproductService.updateProduct(id, product), HttpStatus.OK);
     }
 
     /**
@@ -95,11 +86,11 @@ public class ProductsController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        ProductResponseDTO existingProduct = productService.getProductById(id);
+        ProductResponseDTO existingProduct = IproductService.getProductById(id);
         if (existingProduct == null) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }
-        productService.deleteProduct(id);
+        IproductService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -111,7 +102,7 @@ public class ProductsController {
 
     @GetMapping(params = "name")
     public ResponseEntity<List<ProductResponseDTO>> getProductByName(@RequestParam("name") String name) {
-        List<ProductResponseDTO> products = productService.getProductByName(name);
+        List<ProductResponseDTO> products = IproductService.getProductByName(name);
         if (products.isEmpty()) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }

@@ -1,7 +1,6 @@
 package com.example1.product_management.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example1.product_management.repository.ProductRepository;
 import com.example1.product_management.model.ProductModel;
@@ -9,12 +8,14 @@ import com.example1.product_management.dto.ProductRequestDTO;
 import com.example1.product_management.dto.ProductResponseDTO;
 import com.example1.product_management.mapper.ProductMapper;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Service
 public class ProductService implements IProductService {
 
-    @Autowired
-    private ProductRepository productsRepository;
+
+    private final ProductRepository productsRepository;
 
 
     public List<ProductResponseDTO> getProducts() {
@@ -44,12 +45,10 @@ public class ProductService implements IProductService {
                     existingProduct.setName(product.getName());
                     existingProduct.setDescription(product.getDescription());
                     existingProduct.setPrice(product.getPrice());
+                    existingProduct.setStock(product.getStock());
                     return productsRepository.save(existingProduct);
                 })
-                .orElseGet(() -> {
-                    product.setId(id);
-                    return productsRepository.save(product);
-                }));
+                .orElse(null));
     }
 
     public void deleteProduct(Long id) {
@@ -57,9 +56,8 @@ public class ProductService implements IProductService {
     }
 
     public List<ProductResponseDTO> getProductByName(String name) {
-        return productsRepository.findAll()
+        return productsRepository.findByNameContainingIgnoreCase(name)
                 .stream()
-                .filter(product -> product.getName().equalsIgnoreCase(name))
                 .map(ProductMapper::toProductResponseDTO)
                 .collect(Collectors.toList());
     }

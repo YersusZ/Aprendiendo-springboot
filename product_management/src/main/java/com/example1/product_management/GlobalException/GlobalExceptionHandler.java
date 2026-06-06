@@ -4,8 +4,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.ResponseEntity;
 import com.example1.product_management.exceptions.NotFoundException;
-import com.example1.product_management.exceptions.BusinessException;
-
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,13 +18,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, ex.getStatus());
     }
 
-    @ExceptionHandler(value = BusinessException.class)
-    public ResponseEntity<ErrorDTO> handleBussinesException(BusinessException ex) {
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         ErrorDTO error = ErrorDTO.builder()
-                .code(ex.getCode())
-                .message(ex.getMessage())
+                .code("M-400")
+                .message("Invalid request data")
                 .build();
-        return new ResponseEntity<>(error, ex.getStatus());
+        return new ResponseEntity<>(error, ex.getStatusCode());
     }
 
 }
