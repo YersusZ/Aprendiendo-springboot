@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Min;
-
+import java.math.BigDecimal;
 
 @Getter@Setter
 @NoArgsConstructor
@@ -22,7 +22,7 @@ public class ProductRequestDTO {
     private String description;
 
     @Positive
-    private double price;
+    private BigDecimal price;
 
     @Min(0)
     private Integer stock;

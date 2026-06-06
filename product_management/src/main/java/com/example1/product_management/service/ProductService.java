@@ -56,13 +56,12 @@ public class ProductService implements IProductService {
         productsRepository.deleteById(id);
     }
 
-    public ProductResponseDTO getProductByName(String name) {
+    public List<ProductResponseDTO> getProductByName(String name) {
         return productsRepository.findAll()
                 .stream()
                 .filter(product -> product.getName().equalsIgnoreCase(name))
                 .map(ProductMapper::toProductResponseDTO)
-                .findFirst()
-                .orElse(null);
+                .collect(Collectors.toList());
     }
 }
 

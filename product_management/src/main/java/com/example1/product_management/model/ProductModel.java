@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
+import java.math.BigDecimal;
 
 @Entity
 @Getter @Setter
@@ -20,10 +21,10 @@ import org.hibernate.annotations.CreationTimestamp;
 public class ProductModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String name;
     private String description;
-    private double price;
+    private BigDecimal price;
     private Integer stock;
     @CreationTimestamp
     private LocalDateTime createdAt;
