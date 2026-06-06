@@ -39,11 +39,30 @@ public class ProductService implements IProductService {
 
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO productRequest) {
         ProductModel product = ProductMapper.toProductModelFromRequestDTO(productRequest);
-        return ProductMapper.toProductResponseDTO(productsRepository.save(product));
+        return ProductMapper.toProductResponseDTO(productsRepository.findById(id)
+                .map(existingProduct -> {
+                    existingProduct.setName(product.getName());
+                    existingProduct.setDescription(product.getDescription());
+                    existingProduct.setPrice(product.getPrice());
+                    return productsRepository.save(existingProduct);
+                })
+                .orElseGet(() -> {
+                    product.setId(id);
+                    return productsRepository.save(product);
+                }));
     }
 
     public void deleteProduct(Long id) {
         productsRepository.deleteById(id);
+    }
+
+    public ProductResponseDTO getProductByName(String name) {
+        return productsRepository.findAll()
+                .stream()
+                .filter(product -> product.getName().equalsIgnoreCase(name))
+                .map(ProductMapper::toProductResponseDTO)
+                .findFirst()
+                .orElse(null);
     }
 }
 
