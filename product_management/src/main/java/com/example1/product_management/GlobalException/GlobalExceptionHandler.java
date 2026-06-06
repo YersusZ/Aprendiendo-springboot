@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         ErrorDTO error = ErrorDTO.builder()
                 .code("M-400")
-                .message("Invalid request data")
+                .message(ex.getBindingResult().getFieldError().getDefaultMessage())
                 .build();
         return new ResponseEntity<>(error, ex.getStatusCode());
     }

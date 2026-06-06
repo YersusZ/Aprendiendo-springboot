@@ -9,6 +9,8 @@ import com.example1.product_management.dto.ProductResponseDTO;
 import com.example1.product_management.mapper.ProductMapper;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import com.example1.product_management.exceptions.NotFoundException;
+import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 @Service
@@ -48,7 +50,7 @@ public class ProductService implements IProductService {
                     existingProduct.setStock(product.getStock());
                     return productsRepository.save(existingProduct);
                 })
-                .orElse(null));
+                .orElseThrow(() -> new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND)));
     }
 
     public void deleteProduct(Long id) {

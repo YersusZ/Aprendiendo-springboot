@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.example1.product_management.exceptions.NotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import java.util.List;
 import com.example1.product_management.service.IProductService;
 
@@ -25,12 +25,12 @@ POST/api/v1/products — crear un producto
 PUT/api/v1/products/{id} — actualizar un producto
 DELETE/api/v1/products/{id} — eliminar un producto*/
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/products")
 public class ProductsController {
 
-    @Autowired
-    private IProductService IproductService;
+    private final IProductService IProductService;
 
     /**
      * Listar todos los productos
@@ -38,7 +38,7 @@ public class ProductsController {
      */
     @GetMapping()
     public ResponseEntity<List<ProductResponseDTO>> getProducts() {
-        return new ResponseEntity<>(IproductService.getProducts(), HttpStatus.OK);
+        return new ResponseEntity<>(IProductService.getProducts(), HttpStatus.OK);
     }
 
     /**
@@ -48,7 +48,7 @@ public class ProductsController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductbyId(@PathVariable Long id) {
-        ProductResponseDTO product = IproductService.getProductById(id);
+        ProductResponseDTO product = IProductService.getProductById(id);
         if (product == null) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }
@@ -62,7 +62,7 @@ public class ProductsController {
      */
     @PostMapping()
     public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody @Valid ProductRequestDTO product) {
-        return new ResponseEntity<>(IproductService.createProduct(product), HttpStatus.CREATED);
+        return new ResponseEntity<>(IProductService.createProduct(product), HttpStatus.CREATED);
     }
 
     /**
@@ -73,11 +73,11 @@ public class ProductsController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO product) {
-        ProductResponseDTO existingProduct = IproductService.getProductById(id);
+        ProductResponseDTO existingProduct = IProductService.getProductById(id);
         if (existingProduct == null) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(IproductService.updateProduct(id, product), HttpStatus.OK);
+        return new ResponseEntity<>(IProductService.updateProduct(id, product), HttpStatus.OK);
     }
 
     /**
@@ -86,11 +86,11 @@ public class ProductsController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        ProductResponseDTO existingProduct = IproductService.getProductById(id);
+        ProductResponseDTO existingProduct = IProductService.getProductById(id);
         if (existingProduct == null) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }
-        IproductService.deleteProduct(id);
+        IProductService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -102,7 +102,7 @@ public class ProductsController {
 
     @GetMapping(params = "name")
     public ResponseEntity<List<ProductResponseDTO>> getProductByName(@RequestParam("name") String name) {
-        List<ProductResponseDTO> products = IproductService.getProductByName(name);
+        List<ProductResponseDTO> products = IProductService.getProductByName(name);
         if (products.isEmpty()) {
             throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
         }
