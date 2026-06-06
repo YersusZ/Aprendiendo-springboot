@@ -30,7 +30,7 @@ DELETE/api/v1/products/{id} — eliminar un producto*/
 @RequestMapping("/products")
 public class ProductsController {
 
-    private final IProductService IProductService;
+    private final IProductService productService;
 
     /**
      * Listar todos los productos
@@ -38,7 +38,7 @@ public class ProductsController {
      */
     @GetMapping()
     public ResponseEntity<List<ProductResponseDTO>> getProducts() {
-        return new ResponseEntity<>(IProductService.getProducts(), HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
     }
 
     /**
@@ -48,11 +48,7 @@ public class ProductsController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductbyId(@PathVariable Long id) {
-        ProductResponseDTO product = IProductService.getProductById(id);
-        if (product == null) {
-            throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
     }
 
     /**
@@ -62,7 +58,7 @@ public class ProductsController {
      */
     @PostMapping()
     public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody @Valid ProductRequestDTO product) {
-        return new ResponseEntity<>(IProductService.createProduct(product), HttpStatus.CREATED);
+        return new ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
     }
 
     /**
@@ -73,11 +69,7 @@ public class ProductsController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO product) {
-        ProductResponseDTO existingProduct = IProductService.getProductById(id);
-        if (existingProduct == null) {
-            throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(IProductService.updateProduct(id, product), HttpStatus.OK);
+        return new ResponseEntity<>(productService.updateProduct(id, product), HttpStatus.OK);
     }
 
     /**
@@ -86,11 +78,7 @@ public class ProductsController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        ProductResponseDTO existingProduct = IProductService.getProductById(id);
-        if (existingProduct == null) {
-            throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
-        }
-        IProductService.deleteProduct(id);
+        productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -102,11 +90,7 @@ public class ProductsController {
 
     @GetMapping(params = "name")
     public ResponseEntity<List<ProductResponseDTO>> getProductByName(@RequestParam("name") String name) {
-        List<ProductResponseDTO> products = IProductService.getProductByName(name);
-        if (products.isEmpty()) {
-            throw new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductByName(name), HttpStatus.OK);
     }
 
 }

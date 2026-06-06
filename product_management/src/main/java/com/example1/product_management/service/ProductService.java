@@ -32,7 +32,7 @@ public class ProductService implements IProductService {
                 .stream()
                 .map(ProductMapper::toProductResponseDTO)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new NotFoundException("Product not found", "P-404", HttpStatus.NOT_FOUND));
     }
 
     public ProductResponseDTO createProduct(ProductRequestDTO productRequest) {

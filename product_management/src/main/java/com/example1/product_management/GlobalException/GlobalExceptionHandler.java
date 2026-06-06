@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.ResponseEntity;
 import com.example1.product_management.exceptions.NotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -22,7 +23,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         ErrorDTO error = ErrorDTO.builder()
                 .code("M-400")
-                .message(ex.getBindingResult().getFieldError().getDefaultMessage())
+                .message(ex.getBindingResult().getFieldErrors().stream()
+                        .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage()).collect(Collectors.joining(", ")))
                 .build();
         return new ResponseEntity<>(error, ex.getStatusCode());
     }
